@@ -1,23 +1,5 @@
 #!/usr/bin/python
-#--------------------------------------
-#    ___  ___  _ ____
-#   / _ \/ _ \(_) __/__  __ __
-#  / , _/ ___/ /\ \/ _ \/ // /
-# /_/|_/_/  /_/___/ .__/\_, /
-#                /_/   /___/
-#
-#           bme280.py
-#  Read data from a digital pressure sensor.
-#
-#  Official datasheet available from :
-#  https://www.bosch-sensortec.com/bst/products/all_products/bme280
-#
-# Author : Matt Hawkins
-# Date   : 21/01/2018
-#
-# https://www.raspberrypi-spy.co.uk/
-#
-#--------------------------------------
+
 import smbus
 import time
 from ctypes import c_short
