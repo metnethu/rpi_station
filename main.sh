@@ -5,3 +5,5 @@ while true; do
     /home/pi/rpi_station/task01.py &
     sleep 600
 done
+
+# Ha ez megjelenik, akkor működik az automatikus github
