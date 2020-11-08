@@ -2,6 +2,7 @@
 # coding=utf-8
 # "DATASHEET": http://cl.ly/ekot
 # https://gist.github.com/kadamski/92653913a53baf9dd1a8
+# V1.0 2020.11.08
 from __future__ import print_function
 import serial, struct, sys, time, subprocess, requests, bme280
 
