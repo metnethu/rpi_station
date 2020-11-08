@@ -1,4 +1,8 @@
 #/bin/bash
+# v1.0
+# 2020.11.08.
+
+export PYTHONPATH="/home/pi/import"
 
 while true; do
     pkill task01.py
@@ -6,4 +10,3 @@ while true; do
     sleep 600
 done
 
-# Ha ez megjelenik, akkor működik az automatikus github
