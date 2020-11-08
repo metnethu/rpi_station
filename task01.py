@@ -159,3 +159,5 @@ if __name__ == "__main__":
         print(response.text)
         cmd_set_sleep(1)
         ser.close()
+
+	
