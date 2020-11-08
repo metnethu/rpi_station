@@ -132,16 +132,29 @@ if __name__ == "__main__":
         print(*pm10)
 	post_data = {'pm2' : round(sum(pm25)/len(pm25)), 'pm10' : round(sum(pm10)/len(pm10)), 'date' : time.time(), 'station_id' : '273'}
 
-        try:
-	  t,p,rh = bme280.readBME280All()
-	  post_data['temperature']=t
-          print ("Temperature : ", t, "C")
+       try:
+	  t1,p,rh = bme280.readBME280All()
+          print ("I2C Interface ")
+          print ("Temperature : ", t1, "C")
           print ("Pressure : ", p, "hPa")
           print ("Humidity : ", rh, "%")
+	  post_data['Pressure']=p
         except:
           print("There is no i2c temperature")
+
+	try:
+	    rh, t = Adafruit_DHT.read_retry(Adafruit_DHT.DHT22, 4)
+	    post_data['temperature']=round(t,1)
+            post_data['humidity']=round(rh,1)
+            print (" DHT22: ")
+            print ("Temperature : ", round(t,1), "C")
+            print ("Humidity : ", round(rh,1), "%")
+        except:
+            print("There is no DHT22 data...")
+	    if (t1<>''):
+		post_data['temperature']=t1
+
 	response = requests.post('http://teszt.metnet.hu/api/data', data = post_data)
-#        print(pm25_avg, pm25_max, pm10_avg,pm10_max)
 	print(post_data)
         print(response.text)
         cmd_set_sleep(1)
