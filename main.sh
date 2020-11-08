@@ -1,6 +1,5 @@
 #/bin/bash
-# v1.1
-# 2020.11.08.
+# v1.1 2020.11.08.
 
 export PYTHONPATH="/home/pi/import"
 
