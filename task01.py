@@ -103,6 +103,7 @@ def pub_mqtt(jsonrow):
         json.dump(jsonrow, f)
 
 key = open("/boot/key","r").read()
+key = key[:-1]
 
 
 if __name__ == "__main__":
