@@ -158,7 +158,7 @@ if __name__ == "__main__":
             if (t1<>''):
                 post_data['temperature']=t1
 
-        post_data['X-Device-Token']=key
+        post_data['x-device-token']=key
         response = requests.post('https://www.metnet.hu/api/data', data = post_data)
         print(post_data)
         print(response.text)
