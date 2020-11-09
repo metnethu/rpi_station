@@ -158,8 +158,7 @@ if __name__ == "__main__":
             if (t1<>''):
                 post_data['temperature']=t1
 
-        post_data['x-device-token']=key
-        response = requests.post('https://www.metnet.hu/api/data', data = post_data)
+        response = requests.post('https://www.metnet.hu/api/data', data = post_data, headers={'x-device-token': key})
         print(post_data)
         print(response.text)
         cmd_set_sleep(1)
