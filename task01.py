@@ -134,7 +134,7 @@ if __name__ == "__main__":
               pm10.append(values[1])
         print(*pm25)
         print(*pm10)
-        post_data = {'pm2' : round(sum(pm25)/len(pm25)), 'pm10' : round(sum(pm10)/len(pm10)), 'date' : time.time(), 'station_id' : '273'}
+        post_data = {'pm2' : round(sum(pm25)/len(pm25)), 'pm10' : round(sum(pm10)/len(pm10)), 'date' : time.time()}
 
         try:
           t1,p,rh = bme280.readBME280All()
