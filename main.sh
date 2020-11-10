@@ -5,7 +5,7 @@ export PYTHONPATH="/home/pi/import"
 
 while true; do
     pkill task01.py
-    /home/pi/rpi_station/task01.py & >/dev/null 2>&1 
+    ~/rpi_station/task01.py & >/dev/null 2>&1 
     sleep 600
 done
 
