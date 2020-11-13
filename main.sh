@@ -1,7 +1,7 @@
 #/bin/bash
 # v1.3 2020.11.12.
 
-export PYTHONPATH="/home/pi/import"
+export PYTHONPATH="/home/metnet_20200513/import"
 
 while true; do
     pkill task01.py
