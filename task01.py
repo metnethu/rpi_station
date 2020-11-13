@@ -2,7 +2,7 @@
 # coding=utf-8
 # "DATASHEET": http://cl.ly/ekot
 # https://gist.github.com/kadamski/92653913a53baf9dd1a8
-# V1.1 2020.11.12
+# V1.2 2020.11.13
 from __future__ import print_function
 import serial, struct, sys, time, subprocess, requests, bme280, Adafruit_DHT
 
