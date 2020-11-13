@@ -142,7 +142,7 @@ if __name__ == "__main__":
           print ("Temperature : ", t1, "C")
           print ("Pressure : ", p, "hPa")
           print ("Humidity : ", rh, "%")
-          post_data['pressure']=p
+          post_data['pressure']=round(p,1)
         except:
           print("There is no i2c temperature")
 
