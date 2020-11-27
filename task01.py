@@ -2,9 +2,10 @@
 # coding=utf-8
 # "DATASHEET": http://cl.ly/ekot
 # https://gist.github.com/kadamski/92653913a53baf9dd1a8
-# V1.2 2020.11.13
+# V1.21 2020.11.27
+
 from __future__ import print_function
-import serial, struct, sys, time, subprocess, requests, bme280, Adafruit_DHT
+import serial, struct, sys, time, subprocess, requests, bme280, Adafruit_DHT, gpio
 
 DEBUG = 0
 CMD_MODE = 2
@@ -105,36 +106,45 @@ def pub_mqtt(jsonrow):
 key = open("/boot/key","r").read()
 key = key[:-1]
 
+try:
+    gpio.setmode(gpio.BCM)
+    gpio.setup(17, gpio.OUT, initial=gpio.LOW)
+    gpio.output(17, gpio.HIGH)
+except:
+    print("GPIO hiba...")
 
 if __name__ == "__main__":
 #    while True:
-        ser = serial.Serial()
-        ser.port = "/dev/ttyUSB0"
-        ser.baudrate = 9600
-        ser.open()
-        ser.flushInput()
-        byte, data = 0, ""
-        cmd_set_sleep(0)
-        cmd_firmware_ver()
-        cmd_set_working_period(PERIOD_CONTINUOUS)
-        cmd_set_mode(MODE_QUERY);
-        pm25=list()
-        pm10=list()
-        for t in range(15):
-            values = cmd_query_data();
-            if values is not None and len(values) == 2:
-              print("PM2.5: ", values[0], ", PM10: ", values[1], "for dummy")
-              time.sleep(2)
-        for t in range(15):
-            values = cmd_query_data();
-            if values is not None and len(values) == 2:
-              print("PM2.5: ", values[0], ", PM10: ", values[1])
-              time.sleep(2)
-              pm25.append(values[0])
-              pm10.append(values[1])
-        print(*pm25)
-        print(*pm10)
-        post_data = {'pm2' : round(sum(pm25)/len(pm25)), 'pm10' : round(sum(pm10)/len(pm10)), 'date' : time.time()}
+        try:
+            ser = serial.Serial()
+            ser.port = "/dev/ttyUSB0"
+            ser.baudrate = 9600
+            ser.open()
+            ser.flushInput()
+            byte, data = 0, ""
+            cmd_set_sleep(0)
+            cmd_firmware_ver()
+            cmd_set_working_period(PERIOD_CONTINUOUS)
+            cmd_set_mode(MODE_QUERY);
+            pm25=list()
+            pm10=list()
+            for t in range(15):
+                values = cmd_query_data();
+                if values is not None and len(values) == 2:
+                  print("PM2.5: ", values[0], ", PM10: ", values[1], "for dummy")
+                  time.sleep(2)
+            for t in range(15):
+                values = cmd_query_data();
+                if values is not None and len(values) == 2:
+                  print("PM2.5: ", values[0], ", PM10: ", values[1])
+                  time.sleep(2)
+                  pm25.append(values[0])
+                  pm10.append(values[1])
+            print(*pm25)
+            print(*pm10)
+            post_data = {'pm2' : round(sum(pm25)/len(pm25)), 'pm10' : round(sum(pm10)/len(pm10)), 'date' : time.time()}
+        except:
+            post_data = {'date' : time.time()}
 
         try:
           t1,p,rh = bme280.readBME280All()
@@ -161,6 +171,12 @@ if __name__ == "__main__":
         response = requests.post('https://www.metnet.hu/api/data', data = post_data, headers={'x-device-token': key})
         print(post_data)
         print(response.text)
-        cmd_set_sleep(1)
-        ser.close()
-
+        try:
+            cmd_set_sleep(1)
+            ser.close()
+        except:
+            time.sleep(1)
+        try:
+          gpio.output(17, gpio.LOW)
+        except:
+          print("GPIO hiba...")
