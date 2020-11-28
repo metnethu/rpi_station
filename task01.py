@@ -2,10 +2,15 @@
 # coding=utf-8
 # "DATASHEET": http://cl.ly/ekot
 # https://gist.github.com/kadamski/92653913a53baf9dd1a8
-# V1.21 2020.11.27
+# V1.22 2020.11.28
 
 from __future__ import print_function
-import serial, struct, sys, time, subprocess, requests, bme280, Adafruit_DHT, gpio
+import serial, struct, sys, time, subprocess, requests, bme280, Adafruit_DHT
+
+try:
+    import gpio
+except:
+    print("No GPIO avaiable...")
 
 DEBUG = 0
 CMD_MODE = 2
