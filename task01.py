@@ -135,7 +135,7 @@ def Z_filter(cucc):
   sum = 0
   c   = 0
   for o in l2:
-    if ((mean-o)<3*dev):
+    if ((mean-o)<=3*dev):
       c=c+1
       sum=sum+o
     else:
