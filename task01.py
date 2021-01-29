@@ -5,7 +5,7 @@
 # V1.22 2020.11.28
 
 from __future__ import print_function
-import serial, struct, sys, time, subprocess, requests, bme280, Adafruit_DHT
+import serial, struct, sys, time, subprocess, requests, bme280, Adafruit_DHT, math
 
 try:
     import gpio
@@ -108,6 +108,43 @@ def pub_mqtt(jsonrow):
     with subprocess.Popen(cmd, shell=False, bufsize=0, stdin=subprocess.PIPE).stdin as f:
         json.dump(jsonrow, f)
 
+def rhcode(p1):
+  if (p1==0):
+    return(-999)
+  else:
+    return(p1)
+
+def Z_filter(cucc):
+  res = list()
+  l2 = list()
+  sum = 0
+  dev = 0
+  c = 0
+  for p in cucc:
+    if ((p<>-999) and (p<>None)):
+      l2.append(p)
+      sum=sum+p
+      c=c+1
+  if (c==0):
+    return('')
+  mean=sum/c
+  for o in l2:
+    dev=dev+pow(o-mean,2)
+  dev=math.sqrt(dev)/c
+  print("mean:", mean, "dev:", dev)
+  sum = 0
+  c   = 0
+  for o in l2:
+    if ((mean-o)<3*dev):
+      c=c+1
+      sum=sum+o
+    else:
+      print("Kidobom: ",o)
+  if (c==0):
+    return('')
+  else:
+    return(round(sum/c,1))
+        
 key = open("/boot/key","r").read()
 key = key[:-1]
 
@@ -151,27 +188,47 @@ if __name__ == "__main__":
         except:
             post_data = {'date' : time.time()}
 
-        try:
-          t1,p,rh = bme280.readBME280All()
-          print ("I2C Interface ")
-          print ("Temperature : ", t1, "C")
-          print ("Pressure : ", p, "hPa")
-          print ("Humidity : ", rh, "%")
-          post_data['pressure']=round(p,1)
-        except:
-          print("There is no i2c temperature")
+        t = list()
+        p = list()
+        rh = list()
+        for i in range(0,15):
+          try:
+            t1,p1,rh1 = bme280.readBME280All()
+          except:
+            t1,p1,rh1 = (-999, -999, -999)
+          t.append(t1)
+          p.append(p1)
+          rh.append(rhcode(rh1))
+          time.sleep(1)
+        for i in range(0,3):
+          try:
+            rh1, t1 = Adafruit_DHT.read_retry(Adafruit_DHT.DHT22, 4)
+            print("DHT: ",t1,rh1)
+          except:
+            rh1, t1 = (-999, -999)
+            try:
+              gpio.output(17, gpio.LOW)
+              time.sleep(1)
+              gpio.output(17, gpio.HIGH)
+            except:
+              print("GPIO hiba...")
+          t.append(t1)
+          rh.append(rhcode(rh1))
+        
+        tz=Z_filter(t)
+        pz=Z_filter(p)
+        rhz=Z_filter(rh)
 
-        try:
-            rh, t = Adafruit_DHT.read_retry(Adafruit_DHT.DHT22, 4)
-            post_data['temperature']=round(t,1)
-            post_data['humidity']=round(rh,1)
-            print (" DHT22: ")
-            print ("Temperature : ", round(t,1), "C")
-            print ("Humidity : ", round(rh,1), "%")
-        except:
-            print("There is no DHT22 data...")
-            if (t1<>''):
-                post_data['temperature']=t1
+        print ("Temperature : ", tz, "C")
+        print ("Humidity : ", rhz, "%")
+        print ("Pressure : ", pz, "hPa")
+
+        if (pz<>''):
+          post_data['pressure']=pz
+        if (tz<>''):
+          post_data['temperature']=tz
+        if (rhz<>''):
+          post_data['humidity']=rhz
 
         response = requests.post('https://www.metnet.hu/api/data', data = post_data, headers={'x-device-token': key})
         print(post_data)
