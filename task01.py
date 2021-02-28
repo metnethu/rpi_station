@@ -200,7 +200,7 @@ if __name__ == "__main__":
           p.append(p1)
           rh.append(rhcode(rh1))
           time.sleep(1)
-        for i in range(0,3):
+        for i in range(0,5):
           try:
             rh1, t1 = Adafruit_DHT.read_retry(Adafruit_DHT.DHT22, 4)
             print("DHT: ",t1,rh1)
